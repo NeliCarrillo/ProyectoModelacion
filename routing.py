@@ -39,26 +39,26 @@ def dijkstra(city, origen, destino):
     heapq.heappush(heap, (0, origen))
 
     while heap:
-        dist_actual, nodo_actual = heapq.heappop(heap)
+        dist_actual, nodo = heapq.heappop(heap)
 
-        # Si ya encontramos el destino, podemos terminar
-        if nodo_actual == destino:
-            break
-
-        # Si esta distancia no es la mejor conocida, la descartamos
-        if dist_actual > dist.get(nodo_actual, float("inf")):
+        # Si ya encontramos una mejor distancia antes, ignoramos este estado
+        if dist_actual > dist.get(nodo, float("inf")):
             continue
 
-        # Recorrer vecinos
-        for vecino, costo in city.vecinos(nodo_actual):
+        # Si llegamos al destino, podemos terminar
+        if nodo == destino:
+            break
+
+        # Explorar vecinos
+        for vecino, costo in city.obtener_vecinos_con_costo(nodo):
             nueva_dist = dist_actual + costo
             if nueva_dist < dist.get(vecino, float("inf")):
                 dist[vecino] = nueva_dist
-                prev[vecino] = nodo_actual
+                prev[vecino] = nodo
                 heapq.heappush(heap, (nueva_dist, vecino))
 
     if destino not in dist:
-        # No se encontró camino
+        # No se encontró camino (no debería ocurrir en esta cuadrícula)
         return None, None
 
     # Reconstruir camino desde el destino hacia atrás
@@ -91,14 +91,14 @@ def calcular_rutas_para_pareja(city, destino):
                 "tiempo": minutos
             },
             "andreina": {
-                "origen": ...,
-                "destino": ...,
+                "origen": (calle, carrera),
+                "destino": (calle, carrera),
                 "camino": [...],
                 "tiempo": minutos
             },
             "sincronizacion": {
                 "sale_antes": "Javier" o "Andreína" o "Nadie",
-                "diferencia": minutos (entero)
+                "diferencia": minutos
             }
         }
     """
@@ -111,13 +111,11 @@ def calcular_rutas_para_pareja(city, destino):
     camino_a, tiempo_a = dijkstra(city, hogar_andreina, destino)
 
     if camino_j is None or camino_a is None:
-        # En esta cuadrícula no debería ocurrir,
-        # pero lo manejamos por seguridad.
-        raise RuntimeError("No se pudo encontrar ruta para uno de los dos.")
+        raise ValueError("No se pudo encontrar una ruta para alguno de los dos.")
 
-    # Cálculo de sincronización
+    # Determinar quién debe salir antes
     if tiempo_j == tiempo_a:
-        sale_antes = "Nadie (salen al mismo tiempo)"
+        sale_antes = "Nadie"
         diferencia = 0
     elif tiempo_j > tiempo_a:
         # Javier tarda más, por lo tanto debe salir antes

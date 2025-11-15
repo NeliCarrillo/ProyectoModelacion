@@ -70,9 +70,9 @@ class CityGrid:
             return 10
         return 5
 
-    def vecinos(self, nodo):
+    def obtener_vecinos_con_costo(self, nodo):
         """
-        Devuelve una lista de vecinos alcanzables desde una intersección,
+        Dado un nodo (calle, carrera), devuelve una lista de vecinos
         junto con el costo de caminar hasta ellos.
 
         nodo: (calle, carrera)
