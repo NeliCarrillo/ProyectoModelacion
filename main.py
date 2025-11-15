@@ -50,10 +50,7 @@ def main():
     print("\n--- Sincronización de salida ---")
     print(resultados["sincronizacion"]["mensaje"])
 
-    # Preguntar si quiere ver el grafo
-    ver = input("\n¿Desea ver el grafo con los caminos resaltados? (s/n): ").strip().lower()
-    if ver == "s":
-        visualizar_rutas(resultados)
+    visualizar_rutas(resultados)
 
 
 if __name__ == "__main__":
