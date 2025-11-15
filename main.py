@@ -14,7 +14,7 @@ from routing import calcular_rutas_para_pareja
 
 def mostrar_encabezado():
     print("=" * 70)
-    print("  PROYECTO: MODELACIÓN DE REDES EN BOGOTÁ - JAVIER Y ANDREÍNA")
+    print("  PROYECTO: MODELACIÓN DE REDES EN BOGOTÁ - NELI Y SOFIA")
     print("=" * 70)
     print()
 
