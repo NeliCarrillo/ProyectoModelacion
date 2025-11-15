@@ -1,5 +1,3 @@
-# graph_model.py
-
 import heapq
 from config import CALLES, CARRERAS
 
@@ -8,38 +6,32 @@ def dentro_del_mapa(calle, carrera):
 
 
 def peso_arista(origen, destino):
-    """
-    origen y destino son tuplas (calle, carrera) adyacentes.
-    """
     c1, k1 = origen
     c2, k2 = destino
 
     # Movimiento vertical (misma carrera)
     if k1 == k2 and abs(c1 - c2) == 1:
-        # Carreras 11,12,13 tardan 7 min por cuadra
-        if k1 in (11, 12, 13):
+        if k1 in (11, 12, 13):  # aceras malas
             return 7
         else:
             return 5
 
     # Movimiento horizontal (misma calle)
     if c1 == c2 and abs(k1 - k2) == 1:
-        # Calle 51 tarda 10 min por cuadra
-        if c1 == 51:
+        if c1 == 51:  # calle comercial
             return 10
         else:
             return 5
 
-    # No debería pasar si solo usamos vecinos válidos
     return float("inf")
 
 
 def vecinos(calle, carrera):
     movimientos = [
-        (1, 0),   # subir una calle
-        (-1, 0),  # bajar una calle
-        (0, 1),   # carrera +1
-        (0, -1),  # carrera -1
+        (1, 0),
+        (-1, 0),
+        (0, 1),
+        (0, -1),
     ]
     for dc, dk in movimientos:
         nc, nk = calle + dc, carrera + dk
@@ -48,11 +40,6 @@ def vecinos(calle, carrera):
 
 
 def dijkstra(origen):
-    """
-    Devuelve:
-    - dist: dict nodo -> distancia mínima
-    - padre: dict nodo -> nodo anterior en el camino mínimo
-    """
     dist = {}
     padre = {}
     heap = []
@@ -88,24 +75,57 @@ def reconstruir_camino(padre, destino):
     return camino
 
 
-# --- (Opcional) Construir grafo para networkx en visualize.py ---
-
 def construir_lista_aristas():
-    """
-    Devuelve una lista de aristas (u, v, peso)
-    para usar en la visualización con networkx.
-    """
     aristas = []
     for c in CALLES:
         for k in CARRERAS:
             origen = (c, k)
-            # Solo mirar derecha y arriba para no repetir
             posibles_vecinos = [
-                (c + 1, k),   # arriba
-                (c, k + 1),   # derecha
+                (c + 1, k),
+                (c, k + 1),
             ]
             for destino in posibles_vecinos:
                 if dentro_del_mapa(*destino):
                     w = peso_arista(origen, destino)
                     aristas.append((origen, destino, w))
     return aristas
+
+
+# -------- NUEVO: enumerar caminos posibles --------
+
+def enumerar_caminos(origen, destino, tiempo_max=None):
+    """
+    Devuelve una lista de tuplas (camino, tiempo_total),
+    donde 'camino' es una lista de nodos desde origen hasta destino.
+
+    Se usa DFS con poda por tiempo máximo y sin ciclos (simple paths).
+    """
+    caminos = []
+
+    def dfs(actual, tiempo_acum, camino, visitados):
+        # Poda por tiempo
+        if tiempo_max is not None and tiempo_acum > tiempo_max:
+            return
+
+        if actual == destino:
+            caminos.append((list(camino), tiempo_acum))
+            return
+
+        for nb in vecinos(*actual):
+            if nb in visitados:
+                continue
+            w = peso_arista(actual, nb)
+            nuevo_tiempo = tiempo_acum + w
+            # Poda de nuevo
+            if tiempo_max is not None and nuevo_tiempo > tiempo_max:
+                continue
+
+            visitados.add(nb)
+            camino.append(nb)
+            dfs(nb, nuevo_tiempo, camino, visitados)
+            camino.pop()
+            visitados.remove(nb)
+
+    visitados = {origen}
+    dfs(origen, 0, [origen], visitados)
+    return caminos
