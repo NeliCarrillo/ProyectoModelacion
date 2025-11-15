@@ -20,7 +20,7 @@ except ImportError:
 
 def mostrar_encabezado():
     print("=" * 70)
-    print("  PROYECTO: MODELACIÓN DE REDES EN BOGOTÁ - NELI Y SOFIA")
+    print("  PROYECTO: MODELACIÓN DE REDES EN BOGOTÁ - Javier Y Andreina")
     print("=" * 70)
     print()
 
