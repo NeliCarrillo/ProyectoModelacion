@@ -1,5 +1,3 @@
-# visualize.py
-
 import matplotlib.pyplot as plt
 import networkx as nx
 from config import CALLES, CARRERAS
@@ -15,33 +13,22 @@ def construir_grafo_networkx():
 
 
 def posiciones_nodos():
-    """
-    Asigna posiciones (x,y) a cada nodo para dibujarlo como cuadrícula.
-    Eje X: carreras (10 a 15), pero con 10 a la DERECHA y 15 a la IZQUIERDA.
-    Eje Y: calles (50 a 55), de abajo hacia arriba.
-    """
     pos = {}
     min_calle = min(CALLES)
     max_carrera = max(CARRERAS)
 
     for c in CALLES:
         for k in CARRERAS:
-            # x: invertimos las carreras para que 10 quede a la derecha
-            x = max_carrera - k      # carrera: 10 → x grande (derecha), 15 → x pequeño (izquierda)
-            y = c - min_calle        # calle: 50 abajo, 55 arriba
+            x = max_carrera - k      
+            y = c - min_calle        
             pos[(c, k)] = (x, y)
     return pos
 
 def camino_a_aristas(camino):
-    """
-    Convierte una lista de nodos [n0, n1, n2,...]
-    en una lista de aristas [(n0, n1), (n1, n2), ...]
-    """
     aristas = []
     for i in range(len(camino) - 1):
         u = camino[i]
         v = camino[i + 1]
-        # Como el grafo es no dirigido, normalizamos el orden
         if u < v:
             aristas.append((u, v))
         else:
@@ -50,36 +37,22 @@ def camino_a_aristas(camino):
 
 
 def visualizar_rutas(resultados):
-    """
-    resultados: diccionario devuelto por routing.calcular_rutas
-    Dibuja el grafo y resalta las rutas de Javier y Andreína.
-    """
     G = construir_grafo_networkx()
     pos = posiciones_nodos()
 
     camino_j = resultados["javier"]["camino"]
     camino_a = resultados["andreina"]["camino"]
-
-    # Aristas en cada camino
     aristas_j = set(camino_a_aristas(camino_j))
     aristas_a = set(camino_a_aristas(camino_a))
-
-    # Clasificamos aristas:
-    #  - comunes a ambos
-    #  - solo Javier
-    #  - solo Andreína
     aristas_comunes = aristas_j & aristas_a
     aristas_solo_j = aristas_j - aristas_comunes
     aristas_solo_a = aristas_a - aristas_comunes
 
     plt.figure(figsize=(8, 8))
 
-    # Dibujar todas las aristas en gris claro
     nx.draw_networkx_edges(G, pos, edge_color="lightgray", width=1)
 
-    # ➤ NUEVO: etiquetas de peso (tiempo) en cada arista
     edge_labels = nx.get_edge_attributes(G, "weight")
-    # Mostrar el número con "min"
     edge_labels = {e: f"{w} min" for e, w in edge_labels.items()}
     nx.draw_networkx_edge_labels(
         G,
@@ -89,7 +62,6 @@ def visualizar_rutas(resultados):
         label_pos=0.5,   # posición a la mitad de la arista
     )
 
-    # Resaltar aristas de Javier (azul)
     if aristas_solo_j:
         nx.draw_networkx_edges(
             G, pos,
@@ -99,7 +71,6 @@ def visualizar_rutas(resultados):
             label="Camino Javier",
         )
 
-    # Resaltar aristas de Andreína (rojo)
     if aristas_solo_a:
         nx.draw_networkx_edges(
             G, pos,
@@ -109,7 +80,6 @@ def visualizar_rutas(resultados):
             label="Camino Andreína",
         )
 
-    # Aristas que usan ambos (morado)
     if aristas_comunes:
         nx.draw_networkx_edges(
             G, pos,
@@ -120,14 +90,11 @@ def visualizar_rutas(resultados):
             label="Tramo compartido",
         )
 
-    # Dibujar nodos
     nx.draw_networkx_nodes(G, pos, node_size=300, node_color="white", edgecolors="black")
 
-    # Etiquetas de nodos como (Cxx,Kyy)
     labels = {n: f"C{n[0]}\nK{n[1]}" for n in G.nodes}
     nx.draw_networkx_labels(G, pos, labels=labels, font_size=7)
 
-    # Marcar origen/destino con textos adicionales
     destino_pos = resultados["destino_pos"]
     plt.scatter(
         pos[destino_pos][0],
@@ -139,7 +106,6 @@ def visualizar_rutas(resultados):
         label="Destino",
     )
 
-    # Título con sincronización
     mensaje_sync = resultados["sincronizacion"]["mensaje"]
     titulo = (
         f"Rutas hacia {resultados['destino_nombre']}\n"
