@@ -1,7 +1,8 @@
 # routing.py
 
 from config import JAVIER, ANDREINA, DESTINOS
-from graph_model import dijkstra, enumerar_caminos
+from graph_model import dijkstra, enumerar_caminos, reconstruir_camino
+
 
 def caminos_razonables(origen, destino, margen_extra=20):
     """
@@ -45,40 +46,47 @@ def elegir_pareja_de_caminos(caminos_j, caminos_a, destino):
     return mejor
 
 
-def calcular_rutas(clave_destino):
+def calcular_rutas(destino):
     """
-    Igual interfaz que antes, pero respetando:
-    - no compartir nodos intermedios,
-    - minimizar tiempo total de caminata de la pareja.
+    destino puede ser:
+      - una clave de DESTINOS (str), por ejemplo: "darkness", "pasion", "rolita"
+      - una tupla (calle, carrera) para un destino personalizado, por ejemplo: (52, 11)
     """
-    if clave_destino not in DESTINOS:
-        raise ValueError("Destino no válido")
+    # 1. Determinar posición y nombre del destino
+    if isinstance(destino, str):
+        if destino not in DESTINOS:
+            raise ValueError("Destino no válido")
 
-    destino_info = DESTINOS[clave_destino]
-    destino = destino_info["pos"]
+        destino_info = DESTINOS[destino]
+        destino_pos = destino_info["pos"]
+        destino_nombre = destino_info["nombre"]
+    else:
+        # asumimos que es una tupla (calle, carrera)
+        destino_pos = destino
+        destino_nombre = f"Destino personalizado (Calle {destino_pos[0]}, Carrera {destino_pos[1]})"
 
-    # Caminos razonables para cada uno
-    caminos_j = caminos_razonables(JAVIER, destino, margen_extra=20)
-    caminos_a = caminos_razonables(ANDREINA, destino, margen_extra=20)
+    # 2. Caminos razonables para cada uno
+    caminos_j = caminos_razonables(JAVIER, destino_pos, margen_extra=20)
+    caminos_a = caminos_razonables(ANDREINA, destino_pos, margen_extra=20)
 
-    mejor = elegir_pareja_de_caminos(caminos_j, caminos_a, destino)
+    mejor = elegir_pareja_de_caminos(caminos_j, caminos_a, destino_pos)
 
-    # Si no encontramos ninguna pareja que no se cruce (muy poco probable),
+    # Si no encontramos ninguna pareja que no se cruce,
     # hacemos fallback a los caminos más cortos individuales:
     if mejor is None:
         dist_j, padre_j = dijkstra(JAVIER)
         dist_a, padre_a = dijkstra(ANDREINA)
-        from graph_model import reconstruir_camino
-        camino_j = reconstruir_camino(padre_j, destino)
-        camino_a = reconstruir_camino(padre_a, destino)
-        t_j = dist_j[destino]
-        t_a = dist_a[destino]
+
+        camino_j = reconstruir_camino(padre_j, destino_pos)
+        camino_a = reconstruir_camino(padre_a, destino_pos)
+        t_j = dist_j[destino_pos]
+        t_a = dist_a[destino_pos]
     else:
         camino_j, t_j, camino_a, t_a = mejor
 
     resultado = {
-        "destino_nombre": destino_info["nombre"],
-        "destino_pos": destino,
+        "destino_nombre": destino_nombre,
+        "destino_pos": destino_pos,
         "javier": {
             "origen": JAVIER,
             "camino": camino_j,
@@ -91,7 +99,7 @@ def calcular_rutas(clave_destino):
         },
     }
 
-    # Sincronización de salida (igual que antes)
+    # Sincronización de salida
     if t_j == t_a:
         resultado["sincronizacion"] = {
             "tipo": "simultaneo",
