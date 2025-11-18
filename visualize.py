@@ -2,7 +2,6 @@
 
 import matplotlib.pyplot as plt
 import networkx as nx
-
 from config import CALLES, CARRERAS
 from graph_model import construir_lista_aristas
 

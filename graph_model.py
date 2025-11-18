@@ -90,9 +90,6 @@ def construir_lista_aristas():
                     aristas.append((origen, destino, w))
     return aristas
 
-
-# -------- NUEVO: enumerar caminos posibles --------
-
 def enumerar_caminos(origen, destino, tiempo_max=None):
     """
     Devuelve una lista de tuplas (camino, tiempo_total),
