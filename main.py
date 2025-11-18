@@ -41,7 +41,7 @@ def main():
     titulo = tk.Label(
         root,
         text="Proyecto de Modelación de Sistemas de Redes",
-        font=("Helvetica", 18, "bold"),
+        font=("Helvetica", 20, "bold"),
         bg="#e8eff7",
         fg="#1f3c88",
         wraplength=550,
@@ -52,7 +52,7 @@ def main():
     subtitulo = tk.Label(
         root,
         text="Integrantes:\nNelson Carrillo • José Francisco • Luis Pérez",
-        font=("Helvetica", 12),
+        font=("Helvetica", 20),
         bg="#e8eff7",
         fg="#3a4750",
         justify="center",
@@ -65,7 +65,7 @@ def main():
     label_opciones = tk.Label(
         frame,
         text="Seleccione el destino:",
-        font=("Helvetica", 14, "bold"),
+        font=("Helvetica", 20, "bold"),
         bg="#ffffff",
         fg="#303841"
     )
@@ -74,7 +74,7 @@ def main():
     estilo = ttk.Style()
     estilo.configure(
         "TButton",
-        font=("Helvetica", 12),
+        font=("Helvetica", 20),
         padding=10
     )
 
