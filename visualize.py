@@ -78,6 +78,18 @@ def visualizar_rutas(resultados):
     # Dibujar todas las aristas en gris claro
     nx.draw_networkx_edges(G, pos, edge_color="lightgray", width=1)
 
+    # ➤ NUEVO: etiquetas de peso (tiempo) en cada arista
+    edge_labels = nx.get_edge_attributes(G, "weight")
+    # Mostrar el número con "min"
+    edge_labels = {e: f"{w} min" for e, w in edge_labels.items()}
+    nx.draw_networkx_edge_labels(
+        G,
+        pos,
+        edge_labels=edge_labels,
+        font_size=7,
+        label_pos=0.5,   # posición a la mitad de la arista
+    )
+
     # Resaltar aristas de Javier (azul)
     if aristas_solo_j:
         nx.draw_networkx_edges(
@@ -128,9 +140,8 @@ def visualizar_rutas(resultados):
         label="Destino",
     )
 
-    # Título (incluye mensaje de sincronización)
+    # Título con sincronización
     mensaje_sync = resultados["sincronizacion"]["mensaje"]
-
     titulo = (
         f"Rutas hacia {resultados['destino_nombre']}\n"
         f"Tiempo Javier: {resultados['javier']['tiempo']} min, "
@@ -139,8 +150,7 @@ def visualizar_rutas(resultados):
     )
     plt.title(titulo)
 
-
     plt.axis("off")
-    plt.legend()
+    plt.legend(loc="upper right")
     plt.tight_layout()
     plt.show()
