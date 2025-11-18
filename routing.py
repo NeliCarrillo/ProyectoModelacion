@@ -1,40 +1,28 @@
-# routing.py
-
 from config import JAVIER, ANDREINA, DESTINOS
 from graph_model import dijkstra, enumerar_caminos, reconstruir_camino
 
 
-def caminos_razonables(origen, destino, margen_extra=20):
-    """
-    Genera caminos desde 'origen' a 'destino' que no sean
-    mucho peores que el óptimo.
-    """
+def caminos_razonables(origen, destino, margen_extra=20): #Genera caminos desde 'origen' a 'destino' que no sean mucho peores que el óptimo.
+    
     dist, _ = dijkstra(origen)
     t_min = dist[destino]
     tiempo_max = t_min + margen_extra
 
     todos = enumerar_caminos(origen, destino, tiempo_max=tiempo_max)
-    # Ordenar por tiempo creciente
     todos.sort(key=lambda ct: ct[1])
     return todos
 
 
-def elegir_pareja_de_caminos(caminos_j, caminos_a, destino):
-    """
-    Elige un par (camino_j, camino_a) que:
-      - no comparta nodos intermedios,
-      - minimice tiempo_j + tiempo_a.
+def elegir_pareja_de_caminos(caminos_j, caminos_a, destino): #Elige un par (camino_j, camino_a) que: no comparta nodos intermedios,minimice tiempo_j + tiempo_a.
 
-    caminos_j y caminos_a son listas de (camino, tiempo).
-    """
     mejor = None
     mejor_costo = float("inf")
 
     for camino_j, t_j in caminos_j:
-        nodos_j = set(camino_j[:-1])  # excluimos el destino
+        nodos_j = set(camino_j[:-1])  
         for camino_a, t_a in caminos_a:
             nodos_a = set(camino_a[:-1])
-            # Intersección de nodos intermedios: si hay, se descarta
+            # Intersección de nodos intermedios si hay se descarta pq no se pueden encontrar
             if nodos_j & nodos_a:
                 continue
 
@@ -47,12 +35,6 @@ def elegir_pareja_de_caminos(caminos_j, caminos_a, destino):
 
 
 def calcular_rutas(destino):
-    """
-    destino puede ser:
-      - una clave de DESTINOS (str), por ejemplo: "darkness", "pasion", "rolita"
-      - una tupla (calle, carrera) para un destino personalizado, por ejemplo: (52, 11)
-    """
-    # 1. Determinar posición y nombre del destino
     if isinstance(destino, str):
         if destino not in DESTINOS:
             raise ValueError("Destino no válido")
@@ -61,18 +43,14 @@ def calcular_rutas(destino):
         destino_pos = destino_info["pos"]
         destino_nombre = destino_info["nombre"]
     else:
-        # asumimos que es una tupla (calle, carrera)
         destino_pos = destino
         destino_nombre = f"Destino personalizado (Calle {destino_pos[0]}, Carrera {destino_pos[1]})"
 
-    # 2. Caminos razonables para cada uno
     caminos_j = caminos_razonables(JAVIER, destino_pos, margen_extra=20)
     caminos_a = caminos_razonables(ANDREINA, destino_pos, margen_extra=20)
 
     mejor = elegir_pareja_de_caminos(caminos_j, caminos_a, destino_pos)
 
-    # Si no encontramos ninguna pareja que no se cruce,
-    # hacemos fallback a los caminos más cortos individuales:
     if mejor is None:
         dist_j, padre_j = dijkstra(JAVIER)
         dist_a, padre_a = dijkstra(ANDREINA)
@@ -98,8 +76,6 @@ def calcular_rutas(destino):
             "tiempo": t_a,
         },
     }
-
-    # Sincronización de salida
     if t_j == t_a:
         resultado["sincronizacion"] = {
             "tipo": "simultaneo",
