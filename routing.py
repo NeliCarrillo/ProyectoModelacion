@@ -2,27 +2,23 @@ from config import JAVIER, ANDREINA, DESTINOS
 from graph_model import dijkstra, enumerar_caminos, reconstruir_camino
 
 
-def caminos_razonables(origen, destino, margen_extra=20): #Genera caminos desde 'origen' a 'destino' que no sean mucho peores que el óptimo.
+def caminos_razonables(origen, destino, margen_extra=20): #genera caminos desde 'origen' a 'destino' que no sean mucho peores que el óptimo
     
     dist, _ = dijkstra(origen)
     t_min = dist[destino]
     tiempo_max = t_min + margen_extra
-
     todos = enumerar_caminos(origen, destino, tiempo_max=tiempo_max)
     todos.sort(key=lambda ct: ct[1])
     return todos
 
 
-def elegir_pareja_de_caminos(caminos_j, caminos_a, destino): #Elige un par (camino_j, camino_a) que: no comparta nodos intermedios,minimice tiempo_j + tiempo_a.
-
+def elegir_pareja_de_caminos(caminos_j, caminos_a, destino): #elige un par camino_j, camino_a que no comparta nodos intermedios,minimice tiempo_j + tiempo_a
     mejor = None
     mejor_costo = float("inf")
-
     for camino_j, t_j in caminos_j:
         nodos_j = set(camino_j[:-1])  
         for camino_a, t_a in caminos_a:
-            nodos_a = set(camino_a[:-1])
-            # Intersección de nodos intermedios si hay se descarta pq no se pueden encontrar
+            nodos_a = set(camino_a[:-1]) # intersección de nodos intermedios si hay se descarta pq no se pueden encontrar
             if nodos_j & nodos_a:
                 continue
 
