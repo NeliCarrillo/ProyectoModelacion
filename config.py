@@ -1,14 +1,7 @@
-# config.py
-
-# Rango de calles y carreras
-CALLES = range(50, 56)    # 50,51,52,53,54,55
-CARRERAS = range(10, 16)  # 10,11,12,13,14,15
-
-# Posiciones de Javier y Andreína (calle, carrera)
+CALLES = range(50, 56)    
+CARRERAS = range(10, 16)  
 JAVIER = (54, 14)
 ANDREINA = (52, 13)
-
-# Destinos
 DESTINOS = {
     "darkness": {
         "nombre": "Discoteca The Darkness",
