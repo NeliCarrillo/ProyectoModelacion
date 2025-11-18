@@ -57,7 +57,7 @@ def dijkstra(origen):
         for nb in vecinos(calle, carrera):
             w = peso_arista(nodo, nb)
             nd = d_actual + w
-            if nb not in dist or nd < dist[nb]:
+            if nb not in dist or nd < dist[nb]: #relajamos un vecino
                 dist[nb] = nd
                 padre[nb] = nodo
                 heapq.heappush(heap, (nd, nb))
