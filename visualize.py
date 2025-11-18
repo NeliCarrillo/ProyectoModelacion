@@ -128,13 +128,17 @@ def visualizar_rutas(resultados):
         label="Destino",
     )
 
-    # Título
+    # Título (incluye mensaje de sincronización)
+    mensaje_sync = resultados["sincronizacion"]["mensaje"]
+
     titulo = (
         f"Rutas hacia {resultados['destino_nombre']}\n"
         f"Tiempo Javier: {resultados['javier']['tiempo']} min, "
-        f"Tiempo Andreína: {resultados['andreina']['tiempo']} min"
+        f"Tiempo Andreína: {resultados['andreina']['tiempo']} min\n"
+        f"{mensaje_sync}"
     )
     plt.title(titulo)
+
 
     plt.axis("off")
     plt.legend()

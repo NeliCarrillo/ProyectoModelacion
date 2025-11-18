@@ -43,8 +43,12 @@ def main():
     # ------- Ventana principal -------
     root = tk.Tk()
     root.title("Proyecto de Modelación de Sistemas de Redes")
-    root.geometry("550x460")
     root.configure(bg="#e8eff7")  # Color suave
+
+    # Deja que Tkinter calcule el tamaño necesario
+    # pero ponle un tamaño mínimo cómodo
+    root.update_idletasks()
+    root.minsize(600, 520)
 
     # ------- Título -------
     titulo = tk.Label(
@@ -53,7 +57,7 @@ def main():
         font=("Helvetica", 18, "bold"),
         bg="#e8eff7",
         fg="#1f3c88",
-        wraplength=500,
+        wraplength=550,
         justify="center"
     )
     titulo.pack(pady=15)
@@ -71,7 +75,7 @@ def main():
 
     # ------- Frame para botones -------
     frame = tk.Frame(root, bg="#ffffff", bd=2, relief="groove")
-    frame.pack(pady=30, padx=20)
+    frame.pack(pady=30, padx=40, fill="both", expand=True)
 
     label_opciones = tk.Label(
         frame,
@@ -152,7 +156,7 @@ def main():
         text="Discoteca The Darkness",
         command=lambda: ejecutar_calculo("darkness")
     )
-    btn_darkness.pack(pady=10)
+    btn_darkness.pack(pady=8)
 
     # ------- Botón 2 -------
     btn_pasion = ttk.Button(
@@ -160,7 +164,7 @@ def main():
         text="Bar La Pasión",
         command=lambda: ejecutar_calculo("pasion")
     )
-    btn_pasion.pack(pady=10)
+    btn_pasion.pack(pady=8)
 
     # ------- Botón 3 -------
     btn_rolita = ttk.Button(
@@ -168,7 +172,7 @@ def main():
         text="Cervecería Mi Rolita",
         command=lambda: ejecutar_calculo("rolita")
     )
-    btn_rolita.pack(pady=10)
+    btn_rolita.pack(pady=8)
 
     # ------- Botón 4 - Personalizado -------
     btn_personalizado = ttk.Button(
