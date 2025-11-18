@@ -9,14 +9,14 @@ def peso_arista(origen, destino):
     c1, k1 = origen
     c2, k2 = destino
 
-    # Movimiento vertical (misma carrera)
+    #si es vertical
     if k1 == k2 and abs(c1 - c2) == 1:
         if k1 in (11, 12, 13):  # aceras malas
             return 7
         else:
             return 5
 
-    # Movimiento horizontal (misma calle)
+    #o si es horizontal
     if c1 == c2 and abs(k1 - k2) == 1:
         if c1 == 51:  # calle comercial
             return 10
@@ -57,7 +57,7 @@ def dijkstra(origen):
         for nb in vecinos(calle, carrera):
             w = peso_arista(nodo, nb)
             nd = d_actual + w
-            if nb not in dist or nd < dist[nb]: #relajamos un vecino
+            if nb not in dist or nd < dist[nb]: #relajamos el vecino
                 dist[nb] = nd
                 padre[nb] = nodo
                 heapq.heappush(heap, (nd, nb))
@@ -91,12 +91,8 @@ def construir_lista_aristas():
     return aristas
 
 def enumerar_caminos(origen, destino, tiempo_max=None):
-    """
-    Devuelve una lista de tuplas (camino, tiempo_total),
-    donde 'camino' es una lista de nodos desde origen hasta destino.
-
-    Se usa DFS con poda por tiempo máximo y sin ciclos (simple paths).
-    """
+    #usamos DFS con poda por tiempo máximo y sin ciclos (simple paths).
+    
     caminos = []
 
     def dfs(actual, tiempo_acum, camino, visitados):
@@ -125,4 +121,4 @@ def enumerar_caminos(origen, destino, tiempo_max=None):
 
     visitados = {origen}
     dfs(origen, 0, [origen], visitados)
-    return caminos
+    return caminos #devuelve una lista de tuplas como (camino, tiempo_total) camino es una lista de nodos desde origen hasta destino
